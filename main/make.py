@@ -91,7 +91,11 @@ echo "${source_string}" >'/etc/apt/sources.list'
 
 #;; install packages from local repository
 apt-get update
-apt-get install -y ${_package_list_}
+DEBIAN_FRONTEND=noninteractive apt-get install -y ${_package_list_}
+
+#;; clear package cache
+echo -n >'/etc/apt/sources.list'
+apt-get update
 
 #;; restore original APT sources
 trap 'panic2 ; failsafe1' EXIT
@@ -101,8 +105,8 @@ restore1
 trap - EXIT
 
 #;[NOTE] The original package cache is destroyed. To rebuild it, run command
-#;[    ] "apt-get update" manually. The command is not executed here in this
-#;[    ] script because it will probably require an Internet connection.
+#;[    ] "apt-get update" manually. The command is not executed automatically
+#;[    ] because it will probably require an Internet connection.
 """.lstrip()
 
 def parse_arguments():
